@@ -1,19 +1,22 @@
 #! /bin/bash
 xmldir=$SIXTE/share/sixte/instruments/athena-wfi/wfi_wo_filter_B4C
 
-simnam=testsim_with_back
-# input=testinput.simput
-# input=p13test_with_back.simput
-input=ROSAT_fullextended.simput.gz
-expt=10000 
+simnam=ngc7793_4k
+input=ngc7793_csc2.simput
+
+expt=4000 
 
 xml0=${xmldir}/ld_wfi_ff_chip0.xml
 xml1=${xmldir}/ld_wfi_ff_chip1.xml
 xml2=${xmldir}/ld_wfi_ff_chip2.xml
 xml3=${xmldir}/ld_wfi_ff_chip3.xml
 
+xmltot=${xmldir}/ld_wfi_ff_large.xml
+
 # RA=359.4604754
 # DEC=-32.6241784
+
+## pointing coordinates so that ngc7793 is in top left quadrant
 RA=359.6704754
 DEC=-32.7341784
 
@@ -40,9 +43,25 @@ clobber=yes
 
 $SIXTE/bin/makespec \
 EvtFile=${simnam}_combined_evt.fits \
-Spectrum=${simnam}_p13_det.pha \
-EventFilter="(RA>359.455 || RA<359.465) && Dec>-32.628 && Dec<-32.62" \
+Spectrum=${simnam}_p13.pha \
+EventFilter="regfilter(\"simp13_15as_new.reg\",RA,DEC)" \
 RSPPath=${xmldir} clobber=yes
 
+$SIXTE/bin/makespec \
+EvtFile=${simnam}_combined_evt.fits \
+Spectrum=${simnam}_back.pha \
+EventFilter="regfilter(\"sim_back.reg\",RA,DEC)" \
+RSPPath=${xmldir} clobber=yes
 
-# EventFilter="regfilter(\"simp13_15as.reg\",RA,DEC)" \
+$SIXTE/bin/makespec \
+EvtFile=${simnam}_combined_evt.fits \
+Spectrum=${simnam}_p9.pha \
+EventFilter="regfilter(\"simp9_simple.reg\",RA,DEC)" \
+RSPPath=${xmldir} clobber=yes
+
+$SIXTE/bin/makespec \
+EvtFile=${simnam}_combined_evt.fits \
+Spectrum=${simnam}_faint.pha \
+EventFilter="regfilter(\"simngc7793_faintsource.reg\",RA,DEC)" \
+RSPPath=${xmldir} clobber=yes
+
